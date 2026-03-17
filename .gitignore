@@ -1,0 +1,25 @@
+# Dependencies
+server/node_modules/
+client/node_modules/
+node_modules/
+
+# Build output
+server/dist/
+dist/
+
+# Environment variables
+server/.env
+client/.env
+.env
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.temp
