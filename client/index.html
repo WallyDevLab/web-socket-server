@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebSocket Chat Client</title>
+    <title>WebSocket Chat</title>
     <style>
         * {
             margin: 0;
@@ -12,16 +12,17 @@
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #2c3e50;
+            background: #0f0f1e;
             height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
         }
         .container {
-            background: white;
+            background: #1e1e2e;
             border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            border: 1px solid #2d2d3a;
             width: 90%;
             max-width: 800px;
             height: 600px;
@@ -40,11 +41,11 @@
             padding: 40px;
         }
         .login-screen h1 {
-            color: #333;
+            color: #e4e4e7;
             margin-bottom: 10px;
         }
         .login-screen p {
-            color: #666;
+            color: #9ca3af;
             margin-bottom: 30px;
         }
         .login-form {
@@ -54,38 +55,44 @@
         .login-form input {
             width: 100%;
             padding: 15px;
-            border: 2px solid #e0e0e0;
+            background: #0f0f1e;
+            border: 2px solid #2d2d3a;
             border-radius: 8px;
             font-size: 16px;
+            color: #e4e4e7;
             margin-bottom: 15px;
             transition: border-color 0.3s;
         }
         .login-form input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #00d4ff;
         }
         .login-form button {
             width: 100%;
             padding: 15px;
-            background: #667eea;
-            color: white;
+            background: #00d4ff;
+            color: #0f0f1e;
             border: none;
             border-radius: 8px;
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3);
         }
         .login-form button:hover {
-            background: #5568d3;
+            background: #00b8e6;
+            box-shadow: 0 6px 16px rgba(0, 212, 255, 0.4);
+            transform: translateY(-2px);
         }
         .login-form button:disabled {
-            background: #ccc;
+            background: #2d2d3a;
             cursor: not-allowed;
         }
         .error-message {
-            color: #dc3545;
-            background: #f8d7da;
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid #ef4444;
             padding: 10px;
             border-radius: 6px;
             margin-bottom: 15px;
@@ -99,7 +106,8 @@
             flex-direction: column;
         }
         .chat-header {
-            background: #667eea;
+            background: #0f0f1e;
+            border-bottom: 2px solid #00d4ff;
             color: white;
             padding: 20px;
             display: flex;
@@ -113,19 +121,43 @@
             font-size: 14px;
             opacity: 0.9;
         }
-        .leave-btn {
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .share-btn {
             padding: 8px 16px;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: 2px solid white;
+            background: #00d4ff;
+            color: #0f0f1e;
+            border: none;
             border-radius: 6px;
             font-size: 14px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0, 212, 255, 0.3);
+        }
+        .share-btn:hover {
+            background: #00b8e6;
+            box-shadow: 0 4px 12px rgba(0, 212, 255, 0.4);
+            transform: translateY(-1px);
+        }
+        .leave-btn {
+            padding: 8px 16px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
         .leave-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
+            background: #c0392b;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transform: translateY(-1px);
         }
         .chat-body {
             display: flex;
@@ -136,33 +168,36 @@
             flex: 1;
             padding: 20px;
             overflow-y: auto;
-            background: #f8f9fa;
+            background: #0f0f1e;
         }
         .sidebar {
             width: 200px;
-            background: #f0f0f0;
-            border-left: 1px solid #ddd;
+            background: #1e1e2e;
+            border-left: 1px solid #2d2d3a;
             padding: 20px;
             overflow-y: auto;
         }
         .sidebar h3 {
             font-size: 14px;
-            color: #666;
+            color: #9ca3af;
             margin-bottom: 15px;
             text-transform: uppercase;
+            letter-spacing: 1px;
         }
         .user-item {
             padding: 8px 12px;
-            background: white;
+            background: #0f0f1e;
+            border: 1px solid #2d2d3a;
             border-radius: 6px;
             margin-bottom: 8px;
             font-size: 14px;
+            color: #e4e4e7;
             display: flex;
             align-items: center;
         }
         .user-item::before {
             content: '●';
-            color: #28a745;
+            color: #10b981;
             margin-right: 8px;
         }
         .message {
@@ -190,30 +225,32 @@
             word-wrap: break-word;
         }
         .message.own .message-content {
-            background: #667eea;
-            color: white;
+            background: #00d4ff;
+            color: #0f0f1e;
+            font-weight: 500;
         }
         .message.other .message-content {
-            background: white;
-            color: #333;
+            background: #1e1e2e;
+            border: 1px solid #2d2d3a;
+            color: #e4e4e7;
         }
         .message-username {
             font-size: 12px;
             font-weight: bold;
             margin-bottom: 4px;
-            color: #666;
+            color: #9ca3af;
         }
         .message.own .message-username {
-            color: #667eea;
+            color: #00d4ff;
         }
         .message-time {
             font-size: 11px;
-            color: #999;
+            color: #9ca3af;
             margin-top: 4px;
         }
         .system-message {
             text-align: center;
-            color: #666;
+            color: #9ca3af;
             font-size: 13px;
             margin: 15px 0;
             font-style: italic;
@@ -302,39 +339,55 @@
             background: #f39c12;
             color: white;
         }
+        .share-notification {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 2000;
+            animation: slideIn 0.3s ease-out;
+        }
         .chat-input {
             padding: 20px;
-            background: white;
-            border-top: 1px solid #e0e0e0;
+            background: #1e1e2e;
+            border-top: 2px solid #2d2d3a;
             display: flex;
             gap: 10px;
         }
         .chat-input input {
             flex: 1;
             padding: 12px 16px;
-            border: 2px solid #e0e0e0;
+            background: #0f0f1e;
+            border: 2px solid #2d2d3a;
             border-radius: 24px;
             font-size: 14px;
+            color: #e4e4e7;
         }
         .chat-input input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #00d4ff;
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
         }
         .chat-input button {
             padding: 12px 24px;
-            background: #667eea;
-            color: white;
+            background: #00d4ff;
+            color: #0f0f1e;
             border: none;
             border-radius: 24px;
             font-weight: bold;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: all 0.3s;
         }
         .chat-input button:hover {
-            background: #5568d3;
+            background: #00b8e6;
+            transform: scale(1.05);
         }
         .chat-input button:disabled {
-            background: #ccc;
+            background: #2d2d3a;
             cursor: not-allowed;
         }
         .hidden {
@@ -368,7 +421,10 @@
                     <h2>WebSocket Chat</h2>
                     <div class="username" id="headerUsername"></div>
                 </div>
-                <button class="leave-btn" id="leaveBtn">Leave Chat</button>
+                <div class="header-actions">
+                    <button class="share-btn" id="shareBtn">📋 Share Link</button>
+                    <button class="leave-btn" id="leaveBtn">Leave Chat</button>
+                </div>
             </div>
             <div class="chat-body">
                 <div class="messages-area" id="messagesArea"></div>
@@ -403,6 +459,7 @@
         const userList = document.getElementById('userList');
         const userCount = document.getElementById('userCount');
         const leaveBtn = document.getElementById('leaveBtn');
+        const shareBtn = document.getElementById('shareBtn');
 
         let ws = null;
         let currentUsername = null;
@@ -431,11 +488,13 @@
             connectBtn.textContent = 'Connecting...';
             hideError();
 
-            // Create WebSocket connection
+            // Auto-detect environment
             const isLocal = window.location.hostname === 'localhost';
             const serverUrl = isLocal 
                 ? 'ws://localhost:3000' 
-                : 'wss://web-socket-server-qzzj.onrender.com/';
+                : 'wss://web-socket-server-qzzj.onrender.com';
+            
+            // Create WebSocket connection
             ws = new WebSocket(serverUrl);
 
             ws.onopen = () => {
@@ -571,6 +630,11 @@
             messageInput.disabled = false;
             sendBtn.disabled = false;
             messageInput.focus();
+            
+            // Show share prompt
+            setTimeout(() => {
+                showShareNotification('💡 Click "Share Link" to invite others!');
+            }, 2000);
         }
 
         function showError(message) {
@@ -732,7 +796,7 @@
         // Leave chat gracefully
         function leaveChat() {
             if (ws && ws.readyState === WebSocket.OPEN) {
-                ws.close();  // Close connection cleanly
+                ws.close();
             }
             // Reset UI to login screen
             chatScreen.style.display = 'none';
@@ -759,6 +823,40 @@
                 leaveChat();
             }
         });
+
+        // Share link handler
+        shareBtn.addEventListener('click', async () => {
+            const shareUrl = window.location.href;
+            
+            try {
+                // Try to use native share API (mobile)
+                if (navigator.share) {
+                    await navigator.share({
+                        title: 'Join WebSocket Chat',
+                        text: `Join me in the chat as ${currentUsername}!`,
+                        url: shareUrl
+                    });
+                } else {
+                    // Fallback: copy to clipboard
+                    await navigator.clipboard.writeText(shareUrl);
+                    showShareNotification('Link copied to clipboard!');
+                }
+            } catch (error) {
+                // If clipboard fails, show the URL in a prompt
+                prompt('Copy this link to share:', shareUrl);
+            }
+        });
+
+        function showShareNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'share-notification';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
     </script>
 </body>
 </html>
