@@ -432,7 +432,11 @@
             hideError();
 
             // Create WebSocket connection
-            ws = new WebSocket('ws://localhost:3000');
+            const isLocal = window.location.hostname === 'localhost';
+            const serverUrl = isLocal 
+                ? 'ws://localhost:3000' 
+                : 'wss://web-socket-server-qzzj.onrender.com/';
+            ws = new WebSocket(serverUrl);
 
             ws.onopen = () => {
                 console.log('WebSocket connected, sending auth...');

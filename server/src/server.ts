@@ -77,7 +77,7 @@ let announcementInterval: NodeJS.Timeout | null = null;
 let announcementMessage: string | null = null;
 
 // Step 5: Handle regular HTTP requests
-app.get('/', (req, res) => {
+app.get('/', (req: express.Request, res: express.Response) => {
   res.json({
     message: 'WebSocket server is running',
     endpoint: 'ws://localhost:3000',
